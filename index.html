@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pudins Caseiros da Nicinha - O Sabor Perfeito</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fbf6f0;
+            color: #3e2723;
+            line-height: 1.6;
+            scroll-behavior: smooth; /* Torna a descida suave até ao produto */
+        }
+
+        /* Barra de Navegação / Topo */
+        nav {
+            background-color: #2c1810;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: #f4c430;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links > li {
+            position: relative;
+        }
+
+        .nav-links a {
+            color: #fefae0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .nav-links a:hover {
+            color: #c67d34;
+        }
+
+        /* Menu Deslizante (Dropdown) para os Sabores */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #2c1810;
+            min-width: 220px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            border-radius: 8px;
+            overflow: hidden;
+            list-style: none;
+            padding: 8px 0;
+            z-index: 1100;
+        }
+
+        .dropdown-menu li {
+            width: 100%;
+        }
+
+        .dropdown-menu a {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: #fefae0;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #3e2723;
+            color: #f4c430;
+        }
+
+        /* Mostra o menu deslizante ao passar o rato */
+        .has-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Banner Principal / Hero */
+        header {
+            background: linear-gradient(rgba(44, 24, 16, 0.7), rgba(44, 24, 16, 0.7)), url('foto-hero.jpg') center/cover;
+            color: #fff;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #f4c430;
+            text-shadow: 1px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 650px;
+            margin: 0 auto 25px;
+            color: #fefae0;
+        }
+
+        /* Seção de Conteúdo */
+        .container {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 2rem;
+            color: #5c3a21;
+            font-weight: 700;
+        }
+
+        .grid-pudins {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        /* Cartões de Pudim com margem interna de compensação para o menu fixo */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(92, 58, 33, 0.08);
+            border: 1px solid #f0e6df;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            scroll-margin-top: 90px; /* Garante que o título não fica escondido por baixo do menu fixo ao clicar */
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(92, 58, 33, 0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 230px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            margin-bottom: 8px;
+            color: #4a2c11;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: #6d594b;
+            margin-bottom: 18px;
+            flex-grow: 1;
+        }
+
+        /* Botão Caramelo */
+        .btn-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #c67d34, #a05a1c);
+            color: #ffffff;
+            text-align: center;
+            padding: 13px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(160, 90, 28, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, #a05a1c, #7c400d);
+        }
+
+        /* Rodapé Profissional */
+        footer {
+            background-color: #2c1810;
+            color: #fefae0;
+            padding: 50px 20px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h3 {
+            color: #f4c430;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .footer-col p, .footer-col li {
+            font-size: 0.95rem;
+            color: #d7ccc8;
+            margin-bottom: 8px;
+            list-style: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #4a2c11;
+            padding-top: 20px;
+            font-size: 0.85rem;
+            color: #a1887f;
+        }
+
+        /* Botão Fixo no Telemóvel */
+        .btn-fixo-mobile {
+            display: none;
+            position: fixed;
+            bottom: 18px;
+            left: 5%;
+            width: 90%;
+            background: linear-gradient(135deg, #c67d34, #a05a1c);
+            color: #ffffff;
+            text-align: center;
+            padding: 16px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 8px 22px rgba(62, 39, 35, 0.4);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .btn-fixo-mobile { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Menu Superior com Deslizante -->
+    <nav>
+        <a href="#" class="logo">🍮 Nice Doces</a>
+        <ul class="nav-links">
+            <!-- Menu Sabores com Deslizante -->
+            <li class="has-dropdown">
+                <a href="#sabores">Sabores ▾</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#pudim-leite">1. Leite Tradicional</a></li>
+                    <li><a href="#pudim-cafe">2. Café Gourmet</a></li>
+                    <li><a href="#pudim-doce-leite">3. Doce de Leite</a></li>
+                    <li><a href="#pudim-chocolate-branco">4. Chocolate Branco</a></li>
+                    <li><a href="#pudim-coco-queimado">5. Coco Queimado</a></li>
+                    <li><a href="#pudim-nutella">6. Nutella</a></li>
+                    <li><a href="#pudim-limao">7. Limão</a></li>
+                    <li><a href="#pudim-banoffee">8. Banoffee</a></li>
+                    <li><a href="#pudim-choconozes">9. Choconozes</a></li>
+                    <li><a href="#pudim-ovomaltine">10. Ovomaltine</a></li>
+                    <li><a href="#pudim-romeu-julieta">11. Romeu e Julieta</a></li>
+                    <li><a href="#pudim-panetone">12. Panetone</a></li>
+                    <li><a href="#pudim-black">13. Pudim Black</a></li>
+                    <li><a href="#pudim-pacoca">14. Paçoca</a></li>
+                    <li><a href="#pudim-brigadeiro">15. Brigadeiro</a></li>
+                </ul>
+            </li>
+            <li><a href="#encomendas">Encomendas</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <!-- Cabeçalho Principal -->
+    <header>
+        <h1>Pudins Caseiros de Excelência</h1>
+        <p>Textura cremosa, calda perfeita e ingredientes selecionados. Escolha o seu favorito e encomende com antecedência.</p>
+    </header>
+
+    <!-- Menu de Pudins -->
+    <div class="container" id="sabores">
+        <h2 class="section-title">Os Nossos 15 Sabores Irresistíveis</h2>
+
+        <div class="grid-pudins">
+            <!-- 1. Pudim de Leite -->
+            <div class="card" id="pudim-leite">
+                <img src="pudim-leite.jpg" alt="Pudim Tradicional de Leite">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Leite Tradicional</h3>
+                    <p class="card-text">O clássico inesquecível. Extremamente cremoso e banhado com a tradicional calda de caramelo dourado.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Leite." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 2. Pudim de Café -->
+            <div class="card" id="pudim-cafe">
+                <img src="pudim-cafe.jpg" alt="Pudim de Café">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Café Gourmet</h3>
+                    <p class="card-text">O equilíbrio perfeito entre a doçura do caramelo e o aroma suave do café selecionado.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Café." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 3. Pudim de Doce de Leite -->
+            <div class="card" id="pudim-doce-leite">
+                <img src="pudim-doce-de-leite.jpg" alt="Pudim de Doce de Leite">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Doce de Leite</h3>
+                    <p class="card-text">Um sabor intenso e envolvente, preparado com doce de leite artesanal de textura aveludada.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Doce%20de%20Leite." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 4. Chocolate Branco -->
+            <div class="card" id="pudim-chocolate-branco">
+                <img src="pudim-chocolate-branco.jpg" alt="Pudim de Chocolate Branco">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Chocolate Branco</h3>
+                    <p class="card-text">Para os amantes de cacau, cremoso com cobertura e calda de frutas vermelhas.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Chocolate%20Branco." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 5. Coco Queimado -->
+            <div class="card" id="pudim-coco-queimado">
+                <img src="Pudim-coco-queimado.jpg" alt="Pudim de Coco Queimado">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Coco Queimado</h3>
+                    <p class="card-text">Sabor tropical suave preparado com leite de coco e raspas caramelizadas.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Coco%20Queimado." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 6. Nutella -->
+            <div class="card" id="pudim-nutella">
+                <img src="pudim-nutella.jpg" alt="Pudim de Nutella">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Nutella</h3>
+                    <p class="card-text">Combinação irresistível de avelã e cacau em textura ultralisa.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Nutella." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 7. Limão -->
+            <div class="card" id="pudim-limao">
+                <img src="Pudim-limao.jpg" alt="Pudim de Limão">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Limão</h3>
+                    <p class="card-text">O toque cítrico perfeito para equilibrar a doçura do caramelo.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Limão." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 8. Banoffee -->
+            <div class="card" id="pudim-banoffee">
+                <img src="pudim-banoffee.jpg" alt="Pudim Banoffee">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim Banoffee</h3>
+                    <p class="card-text">Refrescante e leve, com calda artesanal da própria fruta.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20Banoffee." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 9. Choconozes -->
+            <div class="card" id="pudim-choconozes">
+                <img src="pudim-choconozes.jpg" alt="Pudim Choconozes">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim Choconozes</h3>
+                    <p class="card-text">Cremoso, intenso e irresistível. O encontro perfeito entre o cacau mais nobre e a crocância marcante das nozes.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20Choconozes." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 10. Ovomaltine -->
+            <div class="card" id="pudim-ovomaltine">
+                <img src="pudim-ovomaltine.jpg" alt="Pudim de Ovomaltine">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Ovomaltine</h3>
+                    <p class="card-text">O sabor marcante e inesquecível do Ovomaltine. Um sabor maravilhosamente crocante e muito saboroso.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Ovomaltine." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 11. Romeu e Julieta -->
+            <div class="card" id="pudim-romeu-julieta">
+                <img src="pudim-romeu-julieta.jpg" alt="Pudim Romeu e Julieta">
+                <div class="card-body">
+                    <h3 class="card-title">Romeu e Julieta</h3>
+                    <p class="card-text">O clássico contraste entre o creme de queijo e a calda de goiabada.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20Romeu%20e%20Julieta." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 12. Panetone -->
+            <div class="card" id="pudim-panetone">
+                <img src="pudim-panetone.jpg" alt="Pudim de Panetone">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Panetone</h3>
+                    <p class="card-text">Uma receita especial sofisticada com espírito natalino e o doce sabor do panetone.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Panetone." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 13. Black -->
+            <div class="card" id="pudim-black">
+                <img src="Pudim-black.jpg" alt="Pudim Black">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim Black</h3>
+                    <p class="card-text">Uma receita especial sofisticada com toque marcante e sabor intenso.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Black." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 14. Paçoca -->
+            <div class="card" id="pudim-pacoca">
+                <img src="Pudim-pacoca.jpg" alt="Pudim de Paçoca">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Paçoca</h3>
+                    <p class="card-text">O sabor marcante do amendoim numa receita cremosíssima e tradicional.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Paçoca." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+
+            <!-- 15. Brigadeiro -->
+            <div class="card" id="pudim-brigadeiro">
+                <img src="Pudim-brigadeiro.jpg" alt="Pudim de Brigadeiro">
+                <div class="card-body">
+                    <h3 class="card-title">Pudim de Brigadeiro</h3>
+                    <p class="card-text">A união perfeita do pudim cremoso com o irresistível sabor do brigadeiro gourmet.</p>
+                    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20encomendar%20o%20Pudim%20de%20Brigadeiro." class="btn-whatsapp" target="_blank"><span>🍮</span> Encomendar no WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé Profissional -->
+    <footer id="contacto">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>Pudins da Nicinha</h3>
+                <p>Sobremesas artesanais feitas com carinho, dedicação e ingredientes de alta qualidade.</p>
+            </div>
+            <div class="footer-col" id="encomendas">
+                <h3>Encomendas</h3>
+                <ul>
+                    <li>• Pedidos: pedidos@nice.pudins.pt</li>
+		    <li>• Reserve seu sabor com antecedência</li>
+                    <li>• Levantamento no local ou entrega</li>
+                    <li>• Tamanhos familiares e individuais</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contacto Rápido</h3>
+                <p>📍 Braga, Portugal</p>
+                <p>📱 WhatsApp: (+351) 922 234 818</p>
+                <p>📸 Instagram: @nice.pudins</p>
+                <p>📧 E-mail: contacto@nice.pudins.pt</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Pudins Caseiros da Nicinha. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Botão Fixo para Telemóvel -->
+    <a href="https://wa.me/351922234818?text=Olá!%20Gostaria%20de%20fazer%20uma%20encomenda." class="btn-fixo-mobile" target="_blank">
+        🍮 Encomendar via WhatsApp
+    </a>
+
+</body>
+</html>
