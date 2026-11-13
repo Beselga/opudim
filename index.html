@@ -255,7 +255,7 @@
                         <i class="fa-solid fa-shield-halved"></i> Sessão Autenticada via Duo 2FA
                     </div>
                     <h2 class="font-serif text-2xl sm:text-3xl font-extrabold text-white">Painel de Gestão de Preços & Margem</h2>
-                    <p class="text-gray-400 text-xs sm:text-sm mt-1">Ajuste a margem de lucro globalmente ou edite individualmente o custo e preço de venda.</p>
+                    <p class="text-gray-400 text-xs sm:text-sm mt-1">Ajuste a margem de lucro globalmente, edite valores ou ative/desative produtos no site.</p>
                 </div>
                 <button onclick="logoutAdmin()" class="bg-red-900/40 hover:bg-red-800/60 border border-red-500/40 text-red-300 text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
                     <i class="fa-solid fa-right-from-bracket"></i> Sair do Painel
@@ -303,7 +303,7 @@
                             <th class="p-4">Custo Base (€)</th>
                             <th class="p-4">Margem (%)</th>
                             <th class="p-4">Preço Venda (€)</th>
-                            <th class="p-4 text-center">Ações</th>
+                            <th class="p-4 text-center">Exibição / Ações</th>
                         </tr>
                     </thead>
                     <tbody id="admin-table-body" class="divide-y divide-cardBorder text-gray-300">
@@ -629,23 +629,23 @@
             return { ok: r.ok, status: r.status, data };
         }
 
-        // Dados iniciais dos Pudins com Custo Base e Margem de Lucro (%)
+        // Dados iniciais dos Pudins com Custo Base, Margem de Lucro (%) e Estado Ativo (visível no site)
         let pudins = [
-            { id: 1, name: "Pudim Tradicional de Leite", category: "tradicional", cost: 10.00, margin: 50, price: 15.00, image: "pudim-leite.jpg", desc: "O clássico supremo de leite condensado, super cremoso e com calda de caramelo abundante." },
-            { id: 2, name: "Pudim Banoffee", category: "gourmet", cost: 18.67, margin: 50, price: 28.00, image: "pudim-banoffee.jpg", desc: "Combinação divina de pudim de banana caramelizada com toque de doce de leite artesanal." },
-            { id: 3, name: "Pudim Black Sublime", category: "gourmet", cost: 21.33, margin: 50, price: 31.99, image: "pudim-black.jpg", desc: "Intenso pudim de cacau 70% acompanhado de praliné crocante de nozes." },
-            { id: 4, name: "Pudim Brigadeiro Supremo", category: "gourmet", cost: 14.67, margin: 30, price: 19.07, image: "pudim-brigadeiro.jpg", desc: "A fusão perfeita do pudim cremoso com granulado gourmet de chocolate ao leite." },
-            { id: 5, name: "Pudim Expresso Café", category: "gourmet", cost: 12.00, margin: 50, price: 18.00, image: "pudim-cafe.jpg", desc: "Infundido com café arábica especial. Sabor sofisticado para os amantes de café." },
-            { id: 6, name: "Pudim Chocolate Branco & Berries", category: "gourmet", cost: 19.33, margin: 50, price: 28.99, image: "pudim-chocolate-branco.jpg", desc: "Base aveludada de chocolate branco nobre com calda artesanal de frutas vermelhas." },
-            { id: 7, name: "Pudim Choconozes", category: "gourmet", cost: 20.00, margin: 50, price: 30.00, image: "pudim-choconozes.jpg", desc: "Creme denso de chocolate trufado coberto com nozes crocantes selecionadas." },
-            { id: 8, name: "Pudim Coco Queimado", category: "tradicional", cost: 19.33, margin: 50, price: 28.99, image: "pudim-coco-queimado.jpg", desc: "Receita caseira com fita de coco tostado e calda intensa de caramelo." },
-            { id: 9, name: "Pudim Doce de Leite Havaneiro", category: "tradicional", cost: 10.00, margin: 50, price: 15.00, image: "pudim-doce-de-leite.jpg", desc: "Feito com doce de leite cozido lentamente. Textura aveludada incomparável." },
-            { id: 10, name: "Pudim Limão Siciliano", category: "frutas", cost: 12.00, margin: 50, price: 18.00, image: "pudim-limao.jpg", desc: "Refrescante, levemente azedinho e extremamente equilibrado. Finalizado com raspas frescas." },
-            { id: 11, name: "Pudim de Nutella Crocante", category: "gourmet", cost: 16.67, margin: 50, price: 25.01, image: "pudim-nutella.jpg", desc: "Massa rica em creme de avelã Nutella original com cobertura brilhante." },
-            { id: 12, name: "Pudim Ovomaltine", category: "gourmet", cost: 11.33, margin: 50, price: 17.00, image: "pudim-ovomaltine.jpg", desc: "Cremoso por dentro com aquela crocância inconfundível de Ovomaltine." },
-            { id: 13, name: "Pudim Paçoca Cremosa", category: "tradicional", cost: 11.33, margin: 50, price: 17.00, image: "pudim-pacoca.jpg", desc: "Sabor marcante de amendoim torrado na medida certa. O preferido das festas." },
-            { id: 14, name: "Pudim Especial Panetone", category: "gourmet", cost: 12.00, margin: 50, price: 18.00, image: "pudim-panetone.jpg", desc: "Edição especial com especiarias, frutas cristalizadas e aroma inesquecível." },
-            { id: 15, name: "Pudim Romeu & Julieta", category: "frutas", cost: 14.67, margin: 50, price: 22.00, image: "pudim-romeu-julieta.jpg", desc: "Pudim cremoso de queijo refinado coberto com generosa calda de goiabada cascão." }
+            { id: 1, name: "Pudim Tradicional de Leite", category: "tradicional", cost: 10.00, margin: 50, price: 15.00, active: true, image: "pudim-leite.jpg", desc: "O clássico supremo de leite condensado, super cremoso e com calda de caramelo abundante." },
+            { id: 2, name: "Pudim Banoffee", category: "gourmet", cost: 18.67, margin: 50, price: 28.00, active: true, image: "pudim-banoffee.jpg", desc: "Combinação divina de pudim de banana caramelizada com toque de doce de leite artesanal." },
+            { id: 3, name: "Pudim Black", category: "gourmet", cost: 21.33, margin: 50, price: 31.99, active: true, image: "pudim-black.jpg", desc: "Intenso pudim de cacau 70% acompanhado de praliné crocante de nozes." },
+            { id: 4, name: "Pudim de Brigadeiro", category: "gourmet", cost: 14.67, margin: 30, price: 19.07, active: true, image: "pudim-brigadeiro.jpg", desc: "A fusão perfeita do pudim cremoso com granulado gourmet de chocolate ao leite." },
+            { id: 5, name: "Pudim de Café", category: "gourmet", cost: 12.00, margin: 50, price: 18.00, active: true, image: "pudim-cafe.jpg", desc: "Infundido com café arábica especial. Sabor sofisticado para os amantes de café." },
+            { id: 6, name: "Pudim Chocolate Branco & Berries", category: "gourmet", cost: 19.33, margin: 50, price: 28.99, active: true, image: "pudim-chocolate-branco.jpg", desc: "Base aveludada de chocolate branco nobre com calda artesanal de frutas vermelhas." },
+            { id: 7, name: "Pudim Choconozes", category: "gourmet", cost: 20.00, margin: 50, price: 30.00, active: true, image: "pudim-choconozes.jpg", desc: "Creme denso de chocolate trufado coberto com nozes crocantes selecionadas." },
+            { id: 8, name: "Pudim de Coco", category: "tradicional", cost: 19.33, margin: 50, price: 28.99, active: true, image: "pudim-coco-queimado.jpg", desc: "Receita caseira com fita de coco tostado e calda intensa de caramelo." },
+            { id: 9, name: "Pudim Doce de Leite", category: "tradicional", cost: 10.00, margin: 50, price: 15.00, active: true, image: "pudim-doce-de-leite.jpg", desc: "Feito com doce de leite cozido lentamente. Textura aveludada incomparável." },
+            { id: 10, name: "Pudim Limão Siciliano", category: "frutas", cost: 12.00, margin: 50, price: 18.00, active: true, image: "pudim-limao.jpg", desc: "Refrescante, levemente azedinho e extremamente equilibrado. Finalizado com raspas frescas." },
+            { id: 11, name: "Pudim de Nutella", category: "gourmet", cost: 16.67, margin: 50, price: 25.01, active: true, image: "pudim-nutella.jpg", desc: "Massa rica em creme de avelã Nutella original com cobertura brilhante." },
+            { id: 12, name: "Pudim Ovomaltine", category: "gourmet", cost: 11.33, margin: 50, price: 17.00, active: true, image: "pudim-ovomaltine.jpg", desc: "Cremoso por dentro com aquela crocância inconfundível de Ovomaltine." },
+            { id: 13, name: "Pudim de Paçoca", category: "tradicional", cost: 11.33, margin: 50, price: 17.00, active: true, image: "pudim-pacoca.jpg", desc: "Sabor marcante de amendoim torrado na medida certa. O preferido das festas." },
+            { id: 14, name: "Pudim Especial Panetone", category: "gourmet", cost: 12.00, margin: 50, price: 18.00, active: true, image: "pudim-panetone.jpg", desc: "Edição especial com especiarias, frutas cristalizadas e aroma inesquecível." },
+            { id: 15, name: "Pudim Romeu & Julieta", category: "frutas", cost: 14.67, margin: 50, price: 22.00, active: true, image: "pudim-romeu-julieta.jpg", desc: "Pudim cremoso de queijo refinado coberto com generosa calda de goiabada cascão." }
         ];
 
         let cart = [];
@@ -659,7 +659,8 @@
                 if (!r.ok) return;
                 const data = await r.json();
                 if (Array.isArray(data) && data.length > 0) {
-                    pudins = data;
+                    // Garante que produtos vindos do banco sem o campo 'active' fiquem visíveis por padrão
+                    pudins = data.map(p => ({ ...p, active: p.active !== undefined ? Boolean(p.active) : true }));
                     refreshViews();
                 }
             } catch (e) {
@@ -669,12 +670,15 @@
 
         function savePrices() {}
 
-        // RENDERIZAR CARDÁPIO DE PRODUTOS
+        // RENDERIZAR CARDÁPIO DE PRODUTOS (EXIBE APENAS OS PRODUTOS ATIVOS)
         function renderProducts(items) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
 
-            items.forEach(pudim => {
+            // Filtra somente os produtos com active === true
+            const visibleItems = items.filter(pudim => pudim.active !== false);
+
+            visibleItems.forEach(pudim => {
                 const card = document.createElement('div');
                 card.className = 'bg-cardBg rounded-2xl overflow-hidden border border-cardBorder caramel-glow flex flex-col justify-between transition-all duration-300';
                 card.innerHTML = `
@@ -700,18 +704,25 @@
             });
         }
 
-        // RENDERIZAR TABELA ADMIN DE PREÇOS COM O BOTÃO SALVAR EM AMBERGOLD
+        // RENDERIZAR TABELA ADMIN DE PREÇOS COM BOTÃO ATIVAR/DESATIVAR E SALVAR
         function renderAdminTable() {
             const tbody = document.getElementById('admin-table-body');
             tbody.innerHTML = '';
 
             pudins.forEach(pudim => {
+                const isActive = pudim.active !== false;
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-cardBg/50 transition-colors';
+                tr.className = isActive 
+                    ? 'hover:bg-cardBg/50 transition-colors' 
+                    : 'bg-red-950/15 opacity-70 hover:opacity-100 transition-all';
+
                 tr.innerHTML = `
                     <td class="p-4 font-bold text-white flex items-center gap-3">
-                        <img src="${pudim.image}" class="w-9 h-9 rounded-lg object-cover" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=100&q=80';">
-                        <span>${pudim.name}</span>
+                        <img src="${pudim.image}" class="w-9 h-9 rounded-lg object-cover ${!isActive ? 'grayscale' : ''}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=100&q=80';">
+                        <div>
+                            <span class="${!isActive ? 'line-through text-gray-400' : ''}">${pudim.name}</span>
+                            ${!isActive ? '<span class="ml-2 text-[10px] uppercase bg-red-900/60 border border-red-500/40 text-red-300 px-2 py-0.5 rounded-full">Oculto no site</span>' : ''}
+                        </div>
                     </td>
                     <td class="p-4 text-gray-400 capitalize">${pudim.category}</td>
                     <td class="p-4">
@@ -727,13 +738,27 @@
                         <input type="number" step="0.01" value="${pudim.price.toFixed(2)}" onchange="updateProductPriceDirect(${pudim.id}, this.value)" class="w-24 bg-darkBg border border-cardBorder rounded-lg px-2 py-1 text-green-400 font-bold text-xs focus:border-amberGold">
                     </td>
                     <td class="p-4 text-center">
-                        <button onclick="saveSingleProduct(${pudim.id})" class="bg-amberGold/20 hover:bg-amberGold/40 border border-amberGold/40 text-amberGold px-3 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5">
-                            <i class="fa-solid fa-check"></i> Salvar
-                        </button>
+                        <div class="inline-flex items-center justify-center gap-2">
+                            <button onclick="toggleProductVisibility(${pudim.id})" title="${isActive ? 'Clique para ocultar do site' : 'Clique para exibir no site'}" class="${isActive ? 'bg-green-950/60 hover:bg-green-900/80 border-green-500/40 text-green-400' : 'bg-red-950/60 hover:bg-red-900/80 border-red-500/40 text-red-400'} border px-3 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5">
+                                <i class="fa-solid ${isActive ? 'fa-eye' : 'fa-eye-slash'}"></i> ${isActive ? 'Ativo' : 'Oculto'}
+                            </button>
+                            <button onclick="saveSingleProduct(${pudim.id})" class="bg-amberGold/20 hover:bg-amberGold/40 border border-amberGold/40 text-amberGold px-3 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5">
+                                <i class="fa-solid fa-check"></i> Salvar
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        // ALTERNAR PRESENÇA (ATIVAR / DESATIVAR) DO PRODUTO NO SITE
+        function toggleProductVisibility(id) {
+            const pudim = pudins.find(p => p.id === id);
+            if (!pudim) return;
+
+            pudim.active = !(pudim.active !== false);
+            refreshViews();
         }
 
         // ATUALIZAR MARGEM EM UM ÚNICO PRODUTO
@@ -785,10 +810,14 @@
             if (!pudim) return;
             try {
                 const { ok, status, data } = await apiPost("/api/update-product", {
-                    id: pudim.id, cost: pudim.cost, margin: pudim.margin, price: pudim.price
+                    id: pudim.id,
+                    cost: pudim.cost,
+                    margin: pudim.margin,
+                    price: pudim.price,
+                    active: pudim.active !== false
                 });
                 if (ok && data.success) {
-                    alert("Preço do produto atualizado com sucesso!");
+                    alert("Produto atualizado com sucesso!");
                 } else if (status === 401) {
                     alert("A sessão expirou. Faça login novamente.");
                     logoutAdmin();
@@ -796,7 +825,7 @@
                     alert(data.message || "Não foi possível guardar.");
                 }
             } catch (e) {
-                alert("Preço guardado localmente (servidor offline).");
+                alert("Alteração aplicada localmente (servidor offline).");
             }
         }
 
@@ -805,7 +834,11 @@
                 let successCount = 0;
                 for (const pudim of pudins) {
                     const { ok } = await apiPost("/api/update-product", {
-                        id: pudim.id, cost: pudim.cost, margin: pudim.margin, price: pudim.price
+                        id: pudim.id,
+                        cost: pudim.cost,
+                        margin: pudim.margin,
+                        price: pudim.price,
+                        active: pudim.active !== false
                     });
                     if (ok) successCount++;
                 }
@@ -997,6 +1030,8 @@
         // LÓGICA DO CARRINHO
         function addToCart(id) {
             const item = pudins.find(p => p.id === id);
+            if (!item || item.active === false) return;
+
             const exist = cart.find(c => c.id === id);
 
             if (exist) {
