@@ -257,9 +257,14 @@
                     <h2 class="font-serif text-2xl sm:text-3xl font-extrabold text-white">Painel de Gestão de Preços & Margem</h2>
                     <p class="text-gray-400 text-xs sm:text-sm mt-1">Ajuste a margem de lucro globalmente, edite valores ou ative/desative produtos no site.</p>
                 </div>
-                <button onclick="logoutAdmin()" class="bg-red-900/40 hover:bg-red-800/60 border border-red-500/40 text-red-300 text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-right-from-bracket"></i> Sair do Painel
-                </button>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="openProductModal()" class="btn-gold text-black text-xs font-extrabold px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-plus"></i> Novo Produto
+                    </button>
+                    <button onclick="logoutAdmin()" class="bg-red-900/40 hover:bg-red-800/60 border border-red-500/40 text-red-300 text-xs font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sair do Painel
+                    </button>
+                </div>
             </div>
 
             <!-- ALTERAR MARGEM EM MASSA (TODOS OS PRODUTOS SIMULTANEAMENTE) -->
@@ -469,6 +474,81 @@
         </div>
     </footer>
 
+    <!-- MODAL CRIAR / EDITAR PRODUTO (ADMIN) -->
+    <div id="product-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-cardBg w-full max-w-lg rounded-2xl border border-amberGold/40 shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-full bg-amberGold/10 border border-amberGold/30 flex items-center justify-center text-amberGold text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-cake-candles"></i>
+                </div>
+                <h3 id="product-modal-title" class="font-serif text-2xl font-extrabold text-white">Novo Produto</h3>
+                <p class="text-gray-400 text-xs mt-1">Preencha os dados do pudim para exibir no cardápio.</p>
+            </div>
+
+            <form id="product-form" onsubmit="handleSaveProductForm(event)" class="space-y-4">
+                <input type="hidden" id="prod-id">
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Nome do Produto *</label>
+                    <input type="text" id="prod-name" required placeholder="Ex: Pudim de Pistache" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amberGold">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Categoria *</label>
+                        <select id="prod-category" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amberGold">
+                            <option value="tradicional">Tradicional</option>
+                            <option value="gourmet">Gourmet & Especiais</option>
+                            <option value="frutas">Frutados & Cítricos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Arquivo da Imagem</label>
+                        <input type="text" id="prod-image" placeholder="ex: pudim-pistache.jpg" class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amberGold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Custo (€) *</label>
+                        <input type="number" step="0.01" min="0" id="prod-cost" required value="12.00" oninput="recalcModalPriceFromCostOrMargin()" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amberGold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-amberGold mb-1">Margem (%)</label>
+                        <input type="number" step="1" id="prod-margin" required value="50" oninput="recalcModalPriceFromCostOrMargin()" class="w-full bg-darkBg border border-amberGold/40 rounded-xl px-3 py-2.5 text-sm text-amberGold font-bold focus:outline-none focus:border-amberGold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-green-400 mb-1">Preço Venda (€) *</label>
+                        <input type="number" step="0.01" min="0.01" id="prod-price" required value="18.00" oninput="recalcModalMarginFromPrice()" class="w-full bg-darkBg border border-cardBorder rounded-xl px-3 py-2.5 text-sm text-green-400 font-bold focus:outline-none focus:border-amberGold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Descrição</label>
+                    <textarea id="prod-desc" rows="3" placeholder="Descrição irresistível do pudim..." class="w-full bg-darkBg border border-cardBorder rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amberGold"></textarea>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="prod-active" checked class="w-4 h-4 accent-amber-500 rounded">
+                    <label for="prod-active" class="text-xs font-semibold text-gray-300">Produto ativo (visível no site público)</label>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeProductModal()" class="w-1/3 bg-darkBg hover:bg-cardBorder border border-cardBorder text-gray-300 font-bold text-xs py-3 rounded-xl transition-all">
+                        CANCELAR
+                    </button>
+                    <button type="submit" class="w-2/3 btn-gold text-black font-extrabold text-xs py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-floppy-disk"></i> SALVAR PRODUTO
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL DE LOGIN ADMIN (COM DUO 2FA & SUPORTE A PRIMEIRA TROCA DE SENHA) -->
     <div id="login-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-cardBg w-full max-w-md rounded-2xl border border-amberGold/40 shadow-2xl p-6 sm:p-8 relative">
@@ -631,22 +711,172 @@
 
         // Dados iniciais dos Pudins com Custo Base, Margem de Lucro (%) e Estado Ativo (visível no site)
         let pudins = [
-            { id: 1, name: "Pudim Tradicional de Leite", category: "tradicional", cost: 10.00, margin: 50, price: 15.00, active: true, image: "pudim-leite.jpg", desc: "O clássico supremo de leite condensado, super cremoso e com calda de caramelo abundante." },
-            { id: 2, name: "Pudim Banoffee", category: "gourmet", cost: 18.67, margin: 50, price: 28.00, active: true, image: "pudim-banoffee.jpg", desc: "Combinação divina de pudim de banana caramelizada com toque de doce de leite artesanal." },
-            { id: 3, name: "Pudim Black", category: "gourmet", cost: 21.33, margin: 50, price: 31.99, active: true, image: "pudim-black.jpg", desc: "Intenso pudim de cacau 70% acompanhado de praliné crocante de nozes." },
-            { id: 4, name: "Pudim de Brigadeiro", category: "gourmet", cost: 14.67, margin: 30, price: 19.07, active: true, image: "pudim-brigadeiro.jpg", desc: "A fusão perfeita do pudim cremoso com granulado gourmet de chocolate ao leite." },
-            { id: 5, name: "Pudim de Café", category: "gourmet", cost: 12.00, margin: 50, price: 18.00, active: true, image: "pudim-cafe.jpg", desc: "Infundido com café arábica especial. Sabor sofisticado para os amantes de café." },
-            { id: 6, name: "Pudim Chocolate Branco & Berries", category: "gourmet", cost: 19.33, margin: 50, price: 28.99, active: true, image: "pudim-chocolate-branco.jpg", desc: "Base aveludada de chocolate branco nobre com calda artesanal de frutas vermelhas." },
-            { id: 7, name: "Pudim Choconozes", category: "gourmet", cost: 20.00, margin: 50, price: 30.00, active: true, image: "pudim-choconozes.jpg", desc: "Creme denso de chocolate trufado coberto com nozes crocantes selecionadas." },
-            { id: 8, name: "Pudim de Coco", category: "tradicional", cost: 19.33, margin: 50, price: 28.99, active: true, image: "pudim-coco-queimado.jpg", desc: "Receita caseira com fita de coco tostado e calda intensa de caramelo." },
-            { id: 9, name: "Pudim Doce de Leite", category: "tradicional", cost: 10.00, margin: 50, price: 15.00, active: true, image: "pudim-doce-de-leite.jpg", desc: "Feito com doce de leite cozido lentamente. Textura aveludada incomparável." },
-            { id: 10, name: "Pudim Limão Siciliano", category: "frutas", cost: 12.00, margin: 50, price: 18.00, active: true, image: "pudim-limao.jpg", desc: "Refrescante, levemente azedinho e extremamente equilibrado. Finalizado com raspas frescas." },
-            { id: 11, name: "Pudim de Nutella", category: "gourmet", cost: 16.67, margin: 50, price: 25.01, active: true, image: "pudim-nutella.jpg", desc: "Massa rica em creme de avelã Nutella original com cobertura brilhante." },
-            { id: 12, name: "Pudim Ovomaltine", category: "gourmet", cost: 11.33, margin: 50, price: 17.00, active: true, image: "pudim-ovomaltine.jpg", desc: "Cremoso por dentro com aquela crocância inconfundível de Ovomaltine." },
-            { id: 13, name: "Pudim de Paçoca", category: "tradicional", cost: 11.33, margin: 50, price: 17.00, active: true, image: "pudim-pacoca.jpg", desc: "Sabor marcante de amendoim torrado na medida certa. O preferido das festas." },
-            { id: 14, name: "Pudim Especial Panetone", category: "gourmet", cost: 12.00, margin: 50, price: 18.00, active: true, image: "pudim-panetone.jpg", desc: "Edição especial com especiarias, frutas cristalizadas e aroma inesquecível." },
-            { id: 15, name: "Pudim Romeu & Julieta", category: "frutas", cost: 14.67, margin: 50, price: 22.00, active: true, image: "pudim-romeu-julieta.jpg", desc: "Pudim cremoso de queijo refinado coberto com generosa calda de goiabada cascão." }
-        ];
+            {
+                        "id": 1,
+                        "name": "Pudim de Leite",
+                        "category": "tradicional",
+                        "cost": 10.0,
+                        "margin": 55.0,
+                        "price": 15.5,
+                        "active": true,
+                        "image": "pudim-leite.jpg",
+                        "desc": "O clássico supremo de leite condensado, super cremoso e com calda dourada de caramelo abundante."
+            },
+            {
+                        "id": 2,
+                        "name": "Pudim Banoffee",
+                        "category": "gourmet",
+                        "cost": 18.67,
+                        "margin": 55.0,
+                        "price": 28.94,
+                        "active": false,
+                        "image": "pudim-banoffee.jpg",
+                        "desc": "Combinação divina de pudim de banana caramelizada com toque de doce de leite artesanal."
+            },
+            {
+                        "id": 3,
+                        "name": "Pudim Black",
+                        "category": "gourmet",
+                        "cost": 21.33,
+                        "margin": 55.0,
+                        "price": 33.06,
+                        "active": false,
+                        "image": "pudim-black.jpg",
+                        "desc": "Intenso pudim de cacau 70% acompanhado de praliné crocante de nozes."
+            },
+            {
+                        "id": 4,
+                        "name": "Pudim de Brigadeiro",
+                        "category": "gourmet",
+                        "cost": 14.67,
+                        "margin": 55.0,
+                        "price": 22.74,
+                        "active": true,
+                        "image": "pudim-brigadeiro.jpg",
+                        "desc": "A fusão perfeita do pudim cremoso com granulado gourmet de chocolate ao leite."
+            },
+            {
+                        "id": 5,
+                        "name": "Pudim de Café",
+                        "category": "gourmet",
+                        "cost": 12.0,
+                        "margin": 55.0,
+                        "price": 18.6,
+                        "active": true,
+                        "image": "pudim-cafe.jpg",
+                        "desc": "Infundido com café arábica especial. Sabor sofisticado para os amantes de café."
+            },
+            {
+                        "id": 6,
+                        "name": "Pudim Chocolate Branco & Berries",
+                        "category": "gourmet",
+                        "cost": 19.33,
+                        "margin": 55.0,
+                        "price": 29.96,
+                        "active": true,
+                        "image": "pudim-chocolate-branco.jpg",
+                        "desc": "Base aveludada de chocolate branco nobre com calda artesanal de frutas vermelhas."
+            },
+            {
+                        "id": 7,
+                        "name": "Pudim Choconozes",
+                        "category": "gourmet",
+                        "cost": 20.0,
+                        "margin": 55.0,
+                        "price": 31.0,
+                        "active": false,
+                        "image": "pudim-choconozes.jpg",
+                        "desc": "Creme denso de chocolate trufado coberto com nozes crocantes selecionadas."
+            },
+            {
+                        "id": 8,
+                        "name": "Pudim de Coco",
+                        "category": "tradicional",
+                        "cost": 19.33,
+                        "margin": 55.0,
+                        "price": 29.96,
+                        "active": false,
+                        "image": "pudim-coco-queimado.jpg",
+                        "desc": "Receita caseira com fita de coco tostado e calda intensa de caramelo."
+            },
+            {
+                        "id": 9,
+                        "name": "Pudim Doce de Leite",
+                        "category": "tradicional",
+                        "cost": 10.0,
+                        "margin": 55.0,
+                        "price": 15.5,
+                        "active": true,
+                        "image": "pudim-doce-de-leite.jpg",
+                        "desc": "Feito com doce de leite cozido lentamente. Textura aveludada incomparável."
+            },
+            {
+                        "id": 10,
+                        "name": "Pudim Limão Siciliano",
+                        "category": "frutas",
+                        "cost": 12.0,
+                        "margin": 55.0,
+                        "price": 18.6,
+                        "active": true,
+                        "image": "pudim-limao.jpg",
+                        "desc": "Refrescante, levemente azedinho e extremamente equilibrado. Finalizado com raspas frescas."
+            },
+            {
+                        "id": 11,
+                        "name": "Pudim de Nutella",
+                        "category": "gourmet",
+                        "cost": 16.67,
+                        "margin": 55.0,
+                        "price": 25.84,
+                        "active": true,
+                        "image": "pudim-nutella.jpg",
+                        "desc": "Massa rica em creme de avelã Nutella original com cobertura brilhante."
+            },
+            {
+                        "id": 12,
+                        "name": "Pudim  de Ovomaltine",
+                        "category": "gourmet",
+                        "cost": 11.33,
+                        "margin": 55.0,
+                        "price": 17.56,
+                        "active": true,
+                        "image": "pudim-ovomaltine.jpg",
+                        "desc": "Cremoso por dentro com aquela crocância inconfundível de Ovomaltine."
+            },
+            {
+                        "id": 13,
+                        "name": "Pudim de Paçoca",
+                        "category": "tradicional",
+                        "cost": 11.33,
+                        "margin": 55.0,
+                        "price": 17.56,
+                        "active": true,
+                        "image": "pudim-pacoca.jpg",
+                        "desc": "Sabor marcante de amendoim torrado na medida certa. O preferido das festas."
+            },
+            {
+                        "id": 14,
+                        "name": "Pudim Especial de Panetone",
+                        "category": "gourmet",
+                        "cost": 12.0,
+                        "margin": 55.0,
+                        "price": 18.6,
+                        "active": true,
+                        "image": "pudim-panetone.jpg",
+                        "desc": "Edição especial com especiarias, frutas cristalizadas e aroma inesquecível."
+            },
+            {
+                        "id": 15,
+                        "name": "Pudim Romeu & Julieta",
+                        "category": "frutas",
+                        "cost": 14.67,
+                        "margin": 55.0,
+                        "price": 22.74,
+                        "active": true,
+                        "image": "pudim-romeu-julieta.jpg",
+                        "desc": "Pudim cremoso de queijo refinado coberto com generosa calda de goiabada cascão."
+            }
+];
 
         let cart = [];
         let isAdminLoggedIn = false;
@@ -704,7 +934,7 @@
             });
         }
 
-        // RENDERIZAR TABELA ADMIN DE PREÇOS COM BOTÃO ATIVAR/DESATIVAR E SALVAR
+        // RENDERIZAR TABELA ADMIN DE PREÇOS COM CRIAR, EDITAR, ATIVAR/DESATIVAR, SALVAR E EXCLUIR
         function renderAdminTable() {
             const tbody = document.getElementById('admin-table-body');
             tbody.innerHTML = '';
@@ -717,11 +947,13 @@
                     : 'bg-red-950/15 opacity-70 hover:opacity-100 transition-all';
 
                 tr.innerHTML = `
-                    <td class="p-4 font-bold text-white flex items-center gap-3">
-                        <img src="${pudim.image}" class="w-9 h-9 rounded-lg object-cover ${!isActive ? 'grayscale' : ''}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=100&q=80';">
-                        <div>
-                            <span class="${!isActive ? 'line-through text-gray-400' : ''}">${pudim.name}</span>
-                            ${!isActive ? '<span class="ml-2 text-[10px] uppercase bg-red-900/60 border border-red-500/40 text-red-300 px-2 py-0.5 rounded-full">Oculto no site</span>' : ''}
+                    <td class="p-4 font-bold text-white">
+                        <div class="flex items-center gap-3">
+                            <img src="${pudim.image}" class="w-9 h-9 rounded-lg object-cover shrink-0 ${!isActive ? 'grayscale' : ''}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=100&q=80';">
+                            <div class="flex flex-col gap-1 min-w-[170px]">
+                                <input type="text" value="${pudim.name.replace(/"/g, '&quot;')}" onchange="updateProductName(${pudim.id}, this.value)" class="w-full bg-darkBg border border-cardBorder rounded-lg px-2 py-1 text-white font-bold text-xs focus:border-amberGold ${!isActive ? 'line-through text-gray-400' : ''}">
+                                ${!isActive ? '<span class="w-fit text-[10px] uppercase bg-red-900/60 border border-red-500/40 text-red-300 px-2 py-0.5 rounded-full">Oculto no site</span>' : ''}
+                            </div>
                         </div>
                     </td>
                     <td class="p-4 text-gray-400 capitalize">${pudim.category}</td>
@@ -738,18 +970,186 @@
                         <input type="number" step="0.01" value="${pudim.price.toFixed(2)}" onchange="updateProductPriceDirect(${pudim.id}, this.value)" class="w-24 bg-darkBg border border-cardBorder rounded-lg px-2 py-1 text-green-400 font-bold text-xs focus:border-amberGold">
                     </td>
                     <td class="p-4 text-center">
-                        <div class="inline-flex items-center justify-center gap-2">
-                            <button onclick="toggleProductVisibility(${pudim.id})" title="${isActive ? 'Clique para ocultar do site' : 'Clique para exibir no site'}" class="${isActive ? 'bg-green-950/60 hover:bg-green-900/80 border-green-500/40 text-green-400' : 'bg-red-950/60 hover:bg-red-900/80 border-red-500/40 text-red-400'} border px-3 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5">
+                        <div class="inline-flex items-center justify-center gap-1.5 flex-wrap">
+                            <button onclick="openProductModal(${pudim.id})" title="Editar detalhes completos do produto" class="bg-blue-950/60 hover:bg-blue-900/80 border border-blue-500/40 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1">
+                                <i class="fa-solid fa-pen"></i> Editar
+                            </button>
+                            <button onclick="toggleProductVisibility(${pudim.id})" title="${isActive ? 'Clique para ocultar do site' : 'Clique para exibir no site'}" class="${isActive ? 'bg-green-950/60 hover:bg-green-900/80 border-green-500/40 text-green-400' : 'bg-red-950/60 hover:bg-red-900/80 border-red-500/40 text-red-400'} border px-2.5 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1">
                                 <i class="fa-solid ${isActive ? 'fa-eye' : 'fa-eye-slash'}"></i> ${isActive ? 'Ativo' : 'Oculto'}
                             </button>
-                            <button onclick="saveSingleProduct(${pudim.id})" class="bg-amberGold/20 hover:bg-amberGold/40 border border-amberGold/40 text-amberGold px-3 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5">
+                            <button onclick="saveSingleProduct(${pudim.id})" title="Salvar alterações e atualizar index.html" class="bg-amberGold/20 hover:bg-amberGold/40 border border-amberGold/40 text-amberGold px-2.5 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1">
                                 <i class="fa-solid fa-check"></i> Salvar
+                            </button>
+                            <button onclick="deleteProduct(${pudim.id})" title="Excluir produto permanentemente" class="bg-red-950/60 hover:bg-red-800/80 border border-red-500/40 text-red-400 px-2.5 py-1 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1">
+                                <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        // ATUALIZAR NOME INLINE NA TABELA
+        function updateProductName(id, newName) {
+            const trimmed = newName.trim();
+            if (!trimmed) return;
+            const pudim = pudins.find(p => p.id === id);
+            if (pudim) {
+                pudim.name = trimmed;
+                refreshViews();
+            }
+        }
+
+        // MODAL CRIAR / EDITAR PRODUTO
+        function openProductModal(id = null) {
+            const modal = document.getElementById('product-modal');
+            const title = document.getElementById('product-modal-title');
+
+            if (id !== null) {
+                const pudim = pudins.find(p => p.id === id);
+                if (!pudim) return;
+                title.innerText = "Editar Produto";
+                document.getElementById('prod-id').value = pudim.id;
+                document.getElementById('prod-name').value = pudim.name;
+                document.getElementById('prod-category').value = pudim.category;
+                document.getElementById('prod-image').value = pudim.image || "";
+                document.getElementById('prod-cost').value = pudim.cost.toFixed(2);
+                document.getElementById('prod-margin').value = Math.round(pudim.margin);
+                document.getElementById('prod-price').value = pudim.price.toFixed(2);
+                document.getElementById('prod-desc').value = pudim.desc || "";
+                document.getElementById('prod-active').checked = pudim.active !== false;
+            } else {
+                title.innerText = "Novo Produto";
+                document.getElementById('prod-id').value = "";
+                document.getElementById('prod-name').value = "";
+                document.getElementById('prod-category').value = "gourmet";
+                document.getElementById('prod-image').value = "pudim-leite.jpg";
+                document.getElementById('prod-cost').value = "12.00";
+                document.getElementById('prod-margin').value = "50";
+                document.getElementById('prod-price').value = "18.00";
+                document.getElementById('prod-desc').value = "";
+                document.getElementById('prod-active').checked = true;
+            }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('product-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100');
+        }
+
+        function recalcModalPriceFromCostOrMargin() {
+            const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
+            const margin = parseFloat(document.getElementById('prod-margin').value) || 0;
+            const price = cost * (1 + margin / 100);
+            document.getElementById('prod-price').value = price.toFixed(2);
+        }
+
+        function recalcModalMarginFromPrice() {
+            const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
+            const price = parseFloat(document.getElementById('prod-price').value) || 0;
+            if (cost > 0) {
+                const margin = ((price - cost) / cost) * 100;
+                document.getElementById('prod-margin').value = Math.round(margin);
+            }
+        }
+
+        async function handleSaveProductForm(e) {
+            e.preventDefault();
+            const rawId = document.getElementById('prod-id').value;
+            const payload = {
+                name: document.getElementById('prod-name').value.trim(),
+                category: document.getElementById('prod-category').value,
+                image: document.getElementById('prod-image').value.trim() || "pudim-leite.jpg",
+                cost: parseFloat(document.getElementById('prod-cost').value) || 0,
+                margin: parseFloat(document.getElementById('prod-margin').value) || 0,
+                price: parseFloat(document.getElementById('prod-price').value) || 0,
+                desc: document.getElementById('prod-desc').value.trim(),
+                active: document.getElementById('prod-active').checked
+            };
+
+            if (!payload.name) {
+                alert("Por favor, informe o nome do produto.");
+                return;
+            }
+
+            if (rawId) {
+                const id = parseInt(rawId, 10);
+                payload.id = id;
+                try {
+                    const { ok, status, data } = await apiPost("/api/update-product", payload);
+                    if (ok && data.success) {
+                        const idx = pudins.findIndex(p => p.id === id);
+                        if (idx !== -1) pudins[idx] = { ...pudins[idx], ...payload };
+                        refreshViews();
+                        closeProductModal();
+                        alert("Produto atualizado e index.html exportado com sucesso!");
+                    } else if (status === 401) {
+                        alert("A sessão expirou. Faça login novamente.");
+                        logoutAdmin();
+                    } else {
+                        alert(data.message || "Erro ao atualizar produto.");
+                    }
+                } catch (err) {
+                    const idx = pudins.findIndex(p => p.id === id);
+                    if (idx !== -1) pudins[idx] = { ...pudins[idx], ...payload };
+                    refreshViews();
+                    closeProductModal();
+                    alert("Produto atualizado localmente (servidor offline).");
+                }
+            } else {
+                try {
+                    const { ok, status, data } = await apiPost("/api/create-product", payload);
+                    if (ok && data.success && data.product) {
+                        pudins.push(data.product);
+                        refreshViews();
+                        closeProductModal();
+                        alert("Novo produto criado e index.html exportado com sucesso!");
+                    } else if (status === 401) {
+                        alert("A sessão expirou. Faça login novamente.");
+                        logoutAdmin();
+                    } else {
+                        alert(data.message || "Erro ao criar produto.");
+                    }
+                } catch (err) {
+                    const nextId = pudins.length > 0 ? Math.max(...pudins.map(p => p.id)) + 1 : 1;
+                    pudins.push({ id: nextId, ...payload });
+                    refreshViews();
+                    closeProductModal();
+                    alert("Produto adicionado localmente (servidor offline).");
+                }
+            }
+        }
+
+        // EXCLUIR PRODUTO
+        async function deleteProduct(id) {
+            const pudim = pudins.find(p => p.id === id);
+            if (!pudim) return;
+            if (!confirm(`Tem certeza que deseja excluir "${pudim.name}"? Esta ação removerá o produto e atualizará o index.html.`)) {
+                return;
+            }
+
+            try {
+                const { ok, status, data } = await apiPost("/api/delete-product", { id });
+                if (ok && data.success) {
+                    pudins = pudins.filter(p => p.id !== id);
+                    refreshViews();
+                    alert("Produto excluído e index.html atualizado com sucesso!");
+                } else if (status === 401) {
+                    alert("A sessão expirou. Faça login novamente.");
+                    logoutAdmin();
+                } else {
+                    alert(data.message || "Não foi possível excluir o produto.");
+                }
+            } catch (err) {
+                pudins = pudins.filter(p => p.id !== id);
+                refreshViews();
+                alert("Produto removido localmente (servidor offline).");
+            }
         }
 
         // ALTERNAR PRESENÇA (ATIVAR / DESATIVAR) DO PRODUTO NO SITE
@@ -811,13 +1211,17 @@
             try {
                 const { ok, status, data } = await apiPost("/api/update-product", {
                     id: pudim.id,
+                    name: pudim.name,
+                    category: pudim.category,
+                    image: pudim.image,
+                    desc: pudim.desc,
                     cost: pudim.cost,
                     margin: pudim.margin,
                     price: pudim.price,
                     active: pudim.active !== false
                 });
                 if (ok && data.success) {
-                    alert("Produto atualizado com sucesso!");
+                    alert("Produto salvo e index.html atualizado com sucesso!");
                 } else if (status === 401) {
                     alert("A sessão expirou. Faça login novamente.");
                     logoutAdmin();
@@ -835,6 +1239,10 @@
                 for (const pudim of pudins) {
                     const { ok } = await apiPost("/api/update-product", {
                         id: pudim.id,
+                        name: pudim.name,
+                        category: pudim.category,
+                        image: pudim.image,
+                        desc: pudim.desc,
                         cost: pudim.cost,
                         margin: pudim.margin,
                         price: pudim.price,
@@ -842,7 +1250,7 @@
                     });
                     if (ok) successCount++;
                 }
-                alert(`Alterações de ${successCount} produtos salvas com sucesso!`);
+                alert(`Alterações de ${successCount} produtos salvas e index.html atualizado!`);
             } catch (e) {
                 alert("Alterações salvas no painel localmente.");
             }
